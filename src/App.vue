@@ -72,8 +72,4 @@ export default {
 } -->
 <style>
 @import url(styles/app.css);
-.m-content-container{
-  border:none;
-}
-
 </style>

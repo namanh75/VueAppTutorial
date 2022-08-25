@@ -14,19 +14,19 @@
         <span> <img src="../../assets/icons/ic_TongQuan.svg" alt="" ></span>
         <p>Tổng quan</p>
       </router-link>
-      <router-link to="/thiet-bi" class="m-menu-item">
+      <router-link to="/equipment" class="m-menu-item">
         <span> <img src="../../assets/icons/ic_ThietBi.svg" alt="" ></span>
         <p>Thiết Bị</p>
       </router-link>
-      <router-link to="/muon-tra" class="m-menu-item">
+      <router-link to="/payment" class="m-menu-item">
         <span> <img src="../../assets/icons/ic_MuonTra.svg" alt="" ></span>
         <p>Mượn trả</p>
       </router-link>
-      <router-link to="/bao-cao" class="m-menu-item">
+      <router-link to="/report" class="m-menu-item">
         <span> <img src="../../assets/icons/ic_BaoCao.svg" alt="" ></span>
         <p>Báo Cáo</p>
       </router-link>
-      <router-link to="/he-thong" class="m-menu-item">
+      <router-link to="/system" class="m-menu-item">
         <span> <img src="../../assets/icons/ic_HeThong.svg" alt="" ></span>
         <p>Hệ thống</p>
       </router-link>

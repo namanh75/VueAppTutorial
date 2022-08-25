@@ -2,21 +2,21 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import {createRouter, createWebHistory } from 'vue-router'
 
-import ThietBi from './views/ThietBi.vue'
+import EquipmentPage from './views/EquipmentPage.vue'
 import OverViewPage from './views/OverViewPage.vue'
-import MuonTra from './views/MuonTra.vue'
-import BaoCao from './views/BaoCao.vue'
-import HeThong from './views/HeThong.vue'
+import PaymentPage from './views/PaymentPage.vue'
+import ReportPage from './views/ReportPage.vue'
+import SystemPage from './views/SystemPage.vue'
 
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 
 const routes = [
     { path: '/overview', component: OverViewPage },
-    { path: '/thiet-bi', component: ThietBi },
-    { path: '/muon-tra', component: MuonTra },
-    { path: '/bao-cao', component: BaoCao },
-    { path: '/he-thong', component: HeThong },
+    { path: '/equipment', component: EquipmentPage },
+    { path: '/payment', component: PaymentPage },
+    { path: '/report', component: ReportPage },
+    { path: '/system', component: SystemPage },
 ]
 const router = createRouter({
     history: createWebHistory(),

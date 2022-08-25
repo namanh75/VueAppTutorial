@@ -1,7 +1,7 @@
 <template>
   <div class="m-content-container">
     <!-- nodata container-->
-    <NodataContainer />
+    <!-- <NodataContainer /> -->
 
     <!-- main content -->
     <div class="m-content-btn">
@@ -34,6 +34,7 @@
       @dataFromTable="dataFromTable"
       @showFormDetail="showFormDetail"
       @filterLoading="filterLoading"
+      @showNotificationDelete="showNotificationDelete"
     />
 
     <div class="m-content-footer">
@@ -73,6 +74,7 @@
   <NotificationDelete
     v-show="isNotificationDelete"
     @notificationDelete="notificationDelete"
+    @confirmNotificationDelete="confirmNotificationDelete"
   />
 
   <!-- Toast PopUp Error -->
@@ -85,18 +87,16 @@
   <LoadingPage :loadingFilters="loadingFilter" />
 </template>
 <script>
-import NodataContainer from "../components/base/NodataContainer.vue";
-import FormContainer from "../components/base/FormContainer.vue";
+import FormContainer from "../components/base/form/FormContainer.vue";
 import TableContainer from "../components/base/table/TableContainer.vue";
-import NotificationDelete from "../components/base/NotificationDelete.vue";
-import ToastMessageError from "../components/base/ToastMessageError.vue";
-import ToastMessageSuccess from "../components/base/ToastMessageSuccess.vue";
-import LoadingPage from "../components/base/LoadingPage.vue";
+import NotificationDelete from "../components/base/notification/NotificationDelete.vue";
+import ToastMessageError from "../components/base/popup/ToastMessageError.vue";
+import ToastMessageSuccess from "../components/base/popup/ToastMessageSuccess.vue";
+import LoadingPage from "../components/base/filters/LoadingPage.vue";
 
 export default {
   name: "OverView",
   components: {
-    NodataContainer,
     FormContainer,
     TableContainer,
     NotificationDelete,
@@ -116,6 +116,7 @@ export default {
       isShowToastSuccess: false,
       isShowToastError: false,
       warningString: "",
+      employeeDeleteSelect: null,
     };
   },
   methods: {
@@ -170,6 +171,29 @@ export default {
           this.isShowToastError = false;
         }, 3000);
       }
+    },
+
+    /**
+     * Hiện thông báo xóa thi ấn nút xóa
+     */
+    showNotificationDelete(employee) {
+      this.employeeDeleteSelect = employee;
+      console.log(this.employeeDeleteSelect);
+      this.isNotificationDelete = true;
+    },
+    /**
+     * Xác nhận xóa
+     */
+    confirmNotificationDelete() {
+      //call APi Xóa
+
+      //tắt thông Báo
+      this.isNotificationDelete = false;
+      //thông báo xóa thành công hay thất bại
+      this.isShowToastSuccess = true;
+      setTimeout(() => {
+        this.isShowToastSuccess = false;
+      }, 3000);
     },
   },
 };
