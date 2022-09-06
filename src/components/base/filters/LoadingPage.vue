@@ -1,19 +1,20 @@
 <template>
-  <div class="m-loading m-loading-container" v-if="loadingFilter">
+  <div class="m-loading m-loading-container" v-show="loadingFilter">
     <div class="m-icon-loading"></div>
     <p>Đang tải dữ liệu</p>
   </div>
 </template>
 <script>
 export default {
-  props:['loadingFilters'],
   data() {
     return {
       loadingFilter: true,
     };
   },
-  updated() {
-    this.loadingFilter = this.loadingFilters
+  mounted() {
+    setTimeout(() =>{
+      this.loadingFilter = false;
+    }, 500)
   },
 };
 </script>

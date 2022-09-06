@@ -23,7 +23,7 @@
                 class="m-input-check m-focus-input"
                 name="employeeCode"
                 props="Số hiệu cán bộ"
-                v-model="dataSave.EmployeeCode"
+                v-model="dataSave.officerCode"
                 ref="focusInput"
                 @blur="checkEmptyInputEmployeeCode"
               />
@@ -37,7 +37,7 @@
                 class="m-input-check"
                 name="name"
                 props="Họ và tên"
-                v-model="dataSave.EmployeeName"
+                v-model="dataSave.fullName"
                 ref="employeeName"
                 @blur="checkEmptyInputEmployeeName"
               />
@@ -50,6 +50,7 @@
                 type="text"
                 name="phoneNumber"
                 props="Số điện thoại"
+                ref="phoneNumber"
                 v-model="dataSave.phoneNumber"
               />
             </div>
@@ -57,13 +58,13 @@
           <div class="m-input-container">
             <label for="">Email</label>
             <div>
-              <input type="text" :value="dataSelected.Email" />
+              <input type="text" v-model="dataSave.email" ref="email" />
             </div>
           </div>
           <div class="m-input-container">
             <label for="">Tổ bộ môn</label>
             <div>
-              <input type="text" :value="groupSelected" />
+              <input type="text" v-model="dataSave.groupName" />
               <span @click="showGroup"
                 ><i class="fa-solid fa-angle-down m-input-icon-1"></i
               ></span>
@@ -73,14 +74,18 @@
             class="m-input-detail-items m-input-detail-items-1"
             v-show="isShowGroup"
           >
-            <p v-for="gr in groupData" :key="gr" @click="groupClick(gr)">
-              {{ gr }}
+            <p
+              v-for="gr in groupData"
+              :key="gr"
+              @click="groupClick(gr.groupName)"
+            >
+              {{ gr.groupName }}
             </p>
           </div>
           <div class="m-input-container">
             <label for="">Môn dạy</label>
             <div @click="showSubject">
-              <div class="m-subject"></div>
+              <div class="m-subject">{{ dataSave.subjectName }}</div>
               <span><i class="fa-solid fa-angle-down m-input-icon-2"></i></span>
             </div>
           </div>
@@ -89,31 +94,19 @@
             class="m-input-detail-items m-input-detail-items-2"
             v-show="isShowSubject"
           >
-            <div>
+            <div
+              v-for="sb in subjectData"
+              :key="sb"
+              @click="subjectClick(sb.subjectName)"
+            >
               <input type="checkbox" />
-              <p>Hà Nội</p>
-            </div>
-            <div>
-              <input type="checkbox" />
-              <p>TP Hồ Chí Minh</p>
-            </div>
-            <div>
-              <input type="checkbox" />
-              <p>Đà Nẵng</p>
-            </div>
-            <div>
-              <input type="checkbox" />
-              <p>Cần thơ</p>
-            </div>
-            <div>
-              <input type="checkbox" />
-              <p>Hải phòng</p>
+              <p>{{ sb.subjectName }}</p>
             </div>
           </div>
           <div class="m-input-container" id="m-input-max-height">
             <label for="">QL kho, phòng</label>
             <div @click="showRoom">
-              <div class="m-room"></div>
+              <div class="m-room">{{ dataSave.storageRoomName }}</div>
               <span><i class="fa-solid fa-angle-down m-input-icon-3"></i></span>
             </div>
           </div>
@@ -121,25 +114,13 @@
             class="m-input-detail-items m-input-detail-items-3"
             v-show="isShowRoom"
           >
-            <div>
+            <div
+              v-for="sr in storageRoomData"
+              :key="sr"
+              @click="storageRoomClick(sr.storageRoomName)"
+            >
               <input type="checkbox" />
-              <p>Hà Nội</p>
-            </div>
-            <div>
-              <input type="checkbox" />
-              <p>TP Hồ Chí Minh</p>
-            </div>
-            <div>
-              <input type="checkbox" />
-              <p>Đà Nẵng</p>
-            </div>
-            <div>
-              <input type="checkbox" />
-              <p>Cần thơ</p>
-            </div>
-            <div>
-              <input type="checkbox" />
-              <p>Hải phòng</p>
+              <p>{{ sr.storageRoomName }}</p>
             </div>
           </div>
         </nav>
@@ -152,7 +133,12 @@
               class="m-input-radio-check m-input-downline"
             />
             <label>Trình độ nghiệp vụ QLTB</label>
-            <input type="checkbox" class="m-input-radio-check" />
+            <input
+              type="checkbox"
+              class="m-input-radio-check"
+              :checked="change(dataSave.workStatus)"
+              @click="workStatusCheck(dataSave.workStatus)"
+            />
             <label>Đang làm việc</label>
             <label for="">Ngày nghỉ việc</label>
             <div class="m-input-container m-input-container-mini">
@@ -176,9 +162,10 @@
   </div>
 </template>
 <script>
+import axios from "axios";
 export default {
   name: "FormContainer",
-  props: ["dataSelected", "titleForm"],
+  props: ["dataSelected", "titleForm", "flagForm"],
   methods: {
     btnCloseAddOnclick() {
       try {
@@ -223,26 +210,89 @@ export default {
     },
 
     groupClick(gr) {
-      console.log(gr);
       this.groupSelected = gr;
+      this.dataSave.groupName = gr;
       this.isShowGroup = false;
+    },
+    subjectClick(sb) {
+      this.dataSave.subjectName = sb;
+      this.isShowSubject = false;
+    },
+    storageRoomClick(sr) {
+      this.dataSave.storageRoomName = sr;
+      this.isShowRoom = false;
     },
 
     submitData() {
-      this.warningString = "Không được để trống:";
-      var codeVal = this.$refs.focusInput.value;
-      var nameVal = this.$refs.employeeName.value;
-      this.isShowToastSuccess = true;
-      if (nameVal == "") {
-        this.isShowToastSuccess = false;
-        this.warningString += " Họ và tên;";
-      }
-      if (codeVal == "") {
-        this.isShowToastSuccess = false;
-        this.warningString += " Mã nhân viên;";
-      }
+      try {
+        this.warningString = "Không được để trống:";
+        var codeVal = this.$refs.focusInput.value;
+        var nameVal = this.$refs.employeeName.value;
+        var phoneVal = this.$refs.phoneNumber.value;
+        var emailVal = this.$refs.email.value;
+        if (phoneVal == "") this.dataSave.phoneNumber = "chưa có";
+        if (emailVal == "") this.dataSave.email = "test@example.com";
+        this.isShowToastSuccess = true;
+        if (nameVal == "") {
+          this.isShowToastSuccess = false;
+          this.warningString += " Họ và tên;";
+        }
+        if (codeVal == "") {
+          this.isShowToastSuccess = false;
+          this.warningString += " Mã nhân viên;";
+        }
+        if (this.isShowToastSuccess) {
+          if (this.flagForm == 1) {
+            this.dataSave.groupID = null;
+            this.dataSave.subjectID = null;
+            this.dataSave.storageRoomID = null;
+            this.dataSave.identifyNumber="123456789"
 
-      this.$emit("showToast", this.isShowToastSuccess, this.warningString);
+            this.dataSave.identifyNumber = "chưa có";
+            axios
+              .post("http://localhost:5901/api/v1/Officers", this.dataSave)
+              .then((response) => {
+                console.log(response);
+                this.$emit(
+                  "showToast",
+                  this.isShowToastSuccess,
+                  this.warningString
+                );
+              });
+          }
+          if (this.flagForm == 2) {
+            axios
+              .put(
+                `http://localhost:5901/api/v1/Officers/${this.dataSelected.officerID}`,
+                this.dataSave
+              )
+              .then((res) => {
+                console.log(res);
+                this.$emit(
+                  "showToast",
+                  this.isShowToastSuccess,
+                  this.warningString
+                );
+              });
+          }
+        } else {
+          this.$emit("showToast", this.isShowToastSuccess, this.warningString);
+        }
+      } catch (e) {
+        console.log(e);
+        this.isShowToastSuccess = false;
+        this.warningString = "Có lỗi xảy ra ở server";
+        this.$emit("showToast", this.isShowToastSuccess, this.warningString);
+      }
+      console.log(this.dataSave);
+    },
+    change(is) {
+      if (is == 1) return true;
+      if (is == 0) return false;
+    },
+    workStatusCheck(workStatus) {
+      if (workStatus == 1) return (this.dataSave.workStatus = 0);
+      if (workStatus == 0) return (this.dataSave.workStatus = 1);
     },
   },
   data() {
@@ -258,14 +308,9 @@ export default {
       isShowGroup: false,
       isShowRoom: false,
       groupSelected: null,
-      groupData: [
-        "Tổ toán tin",
-        "Tổ lý hóa",
-        "Tổ Sinh Sử Địa",
-        "Tổ anh văn",
-        "Tổ ngữ văn",
-        "Tổ văn phòng",
-      ],
+      groupData: [],
+      subjectData: [],
+      storageRoomData: [],
     };
   },
   created() {
@@ -273,10 +318,28 @@ export default {
   },
   mounted() {
     this.$refs.focusInput.focus();
+    try {
+      var me = this;
+      axios.get("http://localhost:5901/api/v1/Groups").then(function (resp) {
+        me.groupData = resp.data;
+      });
+      axios
+        .get("http://localhost:5901/api/v1/StorageRooms")
+        .then(function (respo) {
+          me.storageRoomData = respo.data;
+        });
+      axios
+        .get("http://localhost:5901/api/v1/Subjects")
+        .then(function (response) {
+          me.subjectData = response.data;
+        });
+    } catch (err) {
+      console.log(err);
+    }
   },
-  updated() {
-    this.dataSelect = "nam";
-  },
+  // updated() {
+  //   this.dataSelect = "nam";
+  // },
 };
 </script>
 

@@ -49,7 +49,14 @@ td img {
   vertical-align: middle;
   cursor: pointer;
 }
-
+.m-td-check{
+  width: 20%;
+  height: 50%;
+  background: url('../../../assets/icons/ic_Check.png');
+  background-repeat: no-repeat;
+  margin-left: 50%;
+  transform: translateX(-50%);
+}
 table tr td span {
   cursor: pointer;
 }
@@ -86,6 +93,7 @@ thead tr {
 
 .m-content-table .m-content-table-column-2 {
   width: calc(2 * var(--value-of-column));
+  max-width: 100px;
   border-right: 1px solid #b1b1b1;
   border-bottom: 1px solid #b1b1b1;
   text-align: left;

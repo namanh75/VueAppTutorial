@@ -91,17 +91,6 @@
     margin-right: 5px;
 }
 
-.m-room {
-    width: 387px;
-    border: none;
-    cursor: pointer;
-}
-
-.m-subject {
-    width: 127px;
-    border: none;
-    cursor: pointer;
-}
 
 .m-form-add .m-form-content nav #m-input-max-height {
     grid-area: 4/1/5/3;
@@ -149,6 +138,7 @@
     font-weight: normal;
 }
 
+
 .m-form-add .m-form-content span {
     color: red;
 }
@@ -181,4 +171,17 @@
 
 .m-form-add .m-form-add-correct {
     border: solid 1px var(--main-color);
+}
+.m-input-container div.m-room{
+    padding-left: 12px;
+    width: 387px;
+    border: none;
+    cursor: pointer;
+}
+
+.m-input-container div.m-subject {
+    padding-left: 12px;
+    width: 127px;
+    border: none;
+    cursor: pointer;
 }

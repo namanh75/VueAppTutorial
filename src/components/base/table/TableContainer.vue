@@ -28,6 +28,7 @@
         @checkItem="checkItem"
         :checkBoxAll="checkAllChild"
         @showNotificationDelete="showNotificationDelete"
+        @totalCountFunction="totalCountFunction"
       />
     </table>
   </div>
@@ -47,9 +48,6 @@ export default {
   },
   props: ["employee"],
   methods: {
-    filterLoading() {
-      this.$emit("filterLoading", false);
-    },
     dataFromBodyTable(employee) {
       console.log(employee);
       this.$emit("dataFromTable", employee);
@@ -64,6 +62,10 @@ export default {
     },
     showNotificationDelete(employee){
       this.$emit("showNotificationDelete", employee)
+    },
+    totalCountFunction(data){
+      console.log(data);
+      this.$emit("totalCountFunction", data)
     }
   },
 };
