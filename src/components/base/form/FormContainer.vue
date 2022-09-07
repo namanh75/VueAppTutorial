@@ -131,6 +131,8 @@
             <input
               type="checkbox"
               class="m-input-radio-check m-input-downline"
+              :checked="change(dataSave.equipmentManagementTraining)"
+              @click="equipmentCheck(dataSave.equipmentManagementTraining)"
             />
             <label>Trình độ nghiệp vụ QLTB</label>
             <input
@@ -142,7 +144,7 @@
             <label>Đang làm việc</label>
             <label for="">Ngày nghỉ việc</label>
             <div class="m-input-container m-input-container-mini">
-              <input type="text" class="m-input-ico m-input-ico-mini" />
+              <input type="text" class="m-input-ico m-input-ico-mini" :value="dataSave.quitDate"/>
               <span class="m-input-ico-right"
                 ><i class="fa-solid fa-calendar-days"></i
               ></span>
@@ -231,7 +233,7 @@ export default {
         var phoneVal = this.$refs.phoneNumber.value;
         var emailVal = this.$refs.email.value;
         if (phoneVal == "") this.dataSave.phoneNumber = "chưa có";
-        if (emailVal == "") this.dataSave.email = "test@example.com";
+        if (emailVal == "") this.dataSave.email = "user@example.com";
         this.isShowToastSuccess = true;
         if (nameVal == "") {
           this.isShowToastSuccess = false;
@@ -246,7 +248,7 @@ export default {
             this.dataSave.groupID = null;
             this.dataSave.subjectID = null;
             this.dataSave.storageRoomID = null;
-            this.dataSave.identifyNumber="123456789"
+            this.dataSave.identifyNumber = "123456789";
 
             this.dataSave.identifyNumber = "chưa có";
             axios
@@ -288,11 +290,16 @@ export default {
     },
     change(is) {
       if (is == 1) return true;
-      if (is == 0) return false;
+      else return false;
     },
     workStatusCheck(workStatus) {
       if (workStatus == 1) return (this.dataSave.workStatus = 0);
-      if (workStatus == 0) return (this.dataSave.workStatus = 1);
+      else if (workStatus == 0) return (this.dataSave.workStatus = 1);
+    },
+    equipmentCheck(equipmentManagement) {
+      if (equipmentManagement == 1)
+        return (this.dataSave.equipmentManagementTraining = 0);
+      else return (this.dataSave.equipmentManagementTraining = 1);
     },
   },
   data() {

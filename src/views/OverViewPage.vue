@@ -7,8 +7,14 @@
     <div class="m-content-btn">
       <div class="m-content-search">
         <div class="m-input-container">
-          <div>
-            <input type="text" value="" />
+          <div :class="{ 'm-filter-search': isSearchData }">
+            <input
+              type="text"
+              placeholder="Nhập mã hoặc họ tên"
+              v-model="keySearch"
+              @keyup="searchData"
+              
+            />
             <span class="m-input-ico-right"
               ><i class="fa-solid fa-magnifying-glass"></i
             ></span>
@@ -35,25 +41,28 @@
       @showFormDetail="showFormDetail"
       @showNotificationDelete="showNotificationDelete"
       @totalCountFunction="totalCountFunction"
+      :reloadData="reloadData"
     />
 
     <div class="m-content-footer">
-      <span>
+      <span @click="firstPageClick">
         <img src="../assets/icons/ic_MoveToFirst.png" alt="" />
       </span>
-      <span>
+      <span @click="backPageClick">
         <img src="../assets/icons/ic_Back.png" alt="" />
       </span>
       <span>
-        <input type="text" />
+        <input type="text" v-model="currentPage" @keyup="pagingSelect" />
       </span>
-      <span>
+      <span @click="nextPageClick">
         <img src="../assets/icons/ic_Next.png" alt="" />
       </span>
-      <span>
+      <span @click="lastPageClick">
         <img src="../assets/icons/ic_MoveToLast.png" alt="" />
       </span>
-      <span> 1/2 trang (56 giáo viên) </span>
+      <span>
+        {{ currentPage }}/{{ totalPage }} trang ({{ totalCount }} giáo viên)
+      </span>
     </div>
   </div>
 
@@ -118,7 +127,14 @@ export default {
       isShowToastError: false,
       warningString: "",
       employeeDeleteSelect: null,
-      flagForm:null,
+      flagForm: null,
+      reloadData: null,
+      totalCount: null,
+      totalPage: null,
+      currentPage: 1,
+      filter: "1",
+      keySearch: "",
+      isSearchData: false,
     };
   },
   methods: {
@@ -141,7 +157,7 @@ export default {
     },
     dataFromTable(employee) {
       this.dataSelected = employee;
-      this.flagForm=2;
+      this.flagForm = 2;
       this.titleForm = "Chỉnh sửa hồ sơ cán bộ nhân viên";
     },
     btnDeleteClick() {
@@ -170,9 +186,157 @@ export default {
       }
     },
     totalCountFunction(data) {
-      console.log(data);
+      this.totalCount = data;
+      this.totalPage = data / 20;
+      this.totalPage = Math.ceil(this.totalPage);
     },
-
+    /**
+     * chuyển trang
+     */
+    firstPageClick() {
+      if (this.currentPage != 1) {
+        this.currentPage = 1;
+        var me = this;
+        try {
+          axios
+            .get(
+              `http://localhost:5901/api/v1/Officers/paging?Offset=${
+                (me.currentPage - 1) * 20 + 1
+              }&Limit=20&filter=${me.filter}`
+            )
+            .then(function (res) {
+              me.reloadData = res.data.data;
+            });
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    },
+    backPageClick() {
+      if (this.currentPage > 1) {
+        this.currentPage = this.currentPage - 1;
+        var me = this;
+        try {
+          axios
+            .get(
+              `http://localhost:5901/api/v1/Officers/paging?Offset=${
+                (me.currentPage - 1) * 20 + 1
+              }&Limit=20&filter=${me.filter}`
+            )
+            .then(function (res) {
+              me.reloadData = res.data.data;
+            });
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    },
+    nextPageClick() {
+      if (this.currentPage < this.totalPage) {
+        this.currentPage = this.currentPage + 1;
+        var me = this;
+        try {
+          axios
+            .get(
+              `http://localhost:5901/api/v1/Officers/paging?Offset=${
+                (me.currentPage - 1) * 20 + 1
+              }&Limit=20&filter=${me.filter}`
+            )
+            .then(function (res) {
+              me.reloadData = res.data.data;
+            });
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    },
+    lastPageClick() {
+      if (this.currentPage != this.totalPage) {
+        this.currentPage = this.totalPage;
+        var me = this;
+        try {
+          axios
+            .get(
+              `http://localhost:5901/api/v1/Officers/paging?Offset=${
+                (me.currentPage - 1) * 20 + 1
+              }&Limit=20&filter=${me.filter}`
+            )
+            .then(function (res) {
+              me.reloadData = res.data.data;
+            });
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    },
+    pagingSelect() {
+      var me = this;
+      if (this.currentPage >= 1 && this.currentPage <= this.totalPage) {
+        try {
+          axios
+            .get(
+              `http://localhost:5901/api/v1/Officers/paging?Offset=${
+                (me.currentPage - 1) * 20 + 1
+              }&Limit=20&filter=${me.filter}`
+            )
+            .then(function (res) {
+              me.reloadData = res.data.data;
+            });
+        } catch (error) {
+          console.log(error);
+          console.log("thất bại");
+        }
+      } else if (this.currentPage == "") {
+        console.log("vui lòng nhập số");
+      } else if (this.currentPage < 1) {
+        this.currentPage = 1;
+        try {
+          axios
+            .get(
+              `http://localhost:5901/api/v1/Officers/paging?Offset=${
+                (me.currentPage - 1) * 20 + 1
+              }&Limit=20`
+            )
+            .then(function (res) {
+              me.reloadData = res.data.data;
+            });
+        } catch (error) {
+          console.log(error);
+          console.log("thất bại");
+        }
+      } else if (this.currentPage > this.totalPage) {
+        this.currentPage = this.totalPage;
+        try {
+          axios
+            .get(
+              `http://localhost:5901/api/v1/Officers/paging?Offset=${
+                (me.currentPage - 1) * 20 + 1
+              }&Limit=20`
+            )
+            .then(function (res) {
+              me.reloadData = res.data.data;
+            });
+        } catch (error) {
+          console.log(error);
+          console.log("thất bại");
+        }
+      } else {
+        this.currentPage = 1;
+        try {
+          axios
+            .get(
+              `http://localhost:5901/api/v1/Officers/paging?Offset=${
+                (me.currentPage - 1) * 20 + 1
+              }&Limit=20`
+            )
+            .then(function (res) {
+              me.reloadData = res.data.data;
+            });
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    },
     /**
      * Hiện thông báo xóa thi ấn nút xóa
      */
@@ -186,19 +350,60 @@ export default {
      */
     confirmNotificationDelete() {
       try {
+        var me = this;
         //call APi Xóa
-        axios.delete(`http://localhost:5901/api/v1/Officers/${this.employeeDeleteSelect.officerID}`).then((response) => {
-          console.log(response);
-        });
-        //tắt thông Báo
-        this.isNotificationDelete = false;
-        //thông báo xóa thành công hay thất bại
-        this.isShowToastSuccess = true;
-        setTimeout(() => {
-          this.isShowToastSuccess = false;
-        }, 3000);
+        axios
+          .delete(
+            `http://localhost:5901/api/v1/Officers/${this.employeeDeleteSelect.officerID}`
+          )
+          .then((response) => {
+            console.log(response);
+            axios
+              .get(
+                `http://localhost:5901/api/v1/Officers/paging?Offset=${
+                  (me.currentPage - 1) * 20 + 1
+                }&Limit=20&filter=${this.filter}`
+              )
+              .then((res) => {
+                me.reloadData = res.data.data;
+                me.totalCount = res.data.totalCount;
+                me.totalCountFunction(me.totalCount);
+              });
+            //tắt thông Báo
+            this.isNotificationDelete = false;
+            //thông báo xóa thành công hay thất bại
+            this.isShowToastSuccess = true;
+            setTimeout(() => {
+              this.isShowToastSuccess = false;
+            }, 3000);
+          });
       } catch (e) {
         console.log(e);
+      }
+    },
+    searchData() {
+      var me = this;
+      if (me.keySearch == "") {
+        me.filter = "1";
+        me.isSearchData=false
+      } else {
+        me.filter = me.keySearch.replace("", "%");
+        me.isSearchData=true
+      }
+      try {
+        axios
+          .get(
+            `http://localhost:5901/api/v1/Officers/paging?Offset=${
+              (me.currentPage - 1) * 20 + 1
+            }&Limit=20&filter=${me.filter}`
+          )
+          .then(function (res) {
+            me.reloadData = res.data.data;
+            me.totalCount = res.data.totalCount;
+            me.totalCountFunction(me.totalCount);
+          });
+      } catch (error) {
+        console.log(error);
       }
     },
   },

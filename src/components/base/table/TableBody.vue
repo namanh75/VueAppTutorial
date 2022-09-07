@@ -32,7 +32,11 @@
         {{ employee.storageRoomName }}
       </td>
       <td class="m-content-table-column-8" @dblclick="rowOnDblClick(employee)">
-        {{employee.equipmentManagementTraining}}
+        <div
+          :class="{
+            'm-td-check': change(employee.equipmentManagementTraining),
+          }"
+        ></div>
       </td>
       <td class="m-content-table-column-9" @dblclick="rowOnDblClick(employee)">
         <div :class="{ 'm-td-check': change(employee.workStatus) }"></div>
@@ -61,9 +65,10 @@ export default {
       dataLength: 20,
       checkList: [],
       checkAll: false,
+      filter: "1",
     };
   },
-  props: ["employee", "checkBoxAll"],
+  props: ["employee", "checkBoxAll", "reloadData"],
   methods: {
     rowOnDblClick(employeedata) {
       this.$emit("dataFromBodyTable", employeedata);
@@ -88,7 +93,7 @@ export default {
     },
     change(is) {
       if (is == 1) return true;
-      if (is == 0) return false;
+      return false;
     },
   },
   beforeUpdate() {
@@ -100,21 +105,28 @@ export default {
         this.checkList.push(i.officerID);
       }
     }
-    console.log(this.checkList);
   },
   mounted() {
+    var me = this;
     try {
-      var me = this;
       axios
-        .get("http://localhost:5901/api/v1/Officers/paging?Offset=1&Limit=20")
+        .get(`http://localhost:5901/api/v1/Officers/paging?Offset=1&Limit=20&filter=${this.filter}`)
         .then(function (res) {
           me.employees = res.data.data;
           me.totalCount = res.data.totalCount;
-          this.$emit("totalCountFunction", this.totalCount);
+          me.$emit("totalCountFunction", me.totalCount);
         });
     } catch (error) {
       console.log(error);
     }
+  },
+  created() {
+    this.employees = this.reloadData;
+  },
+  watch: {
+    reloadData() {
+      this.employees = this.reloadData;
+    },
   },
 };
 </script>

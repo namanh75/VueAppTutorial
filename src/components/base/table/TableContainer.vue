@@ -29,6 +29,7 @@
         :checkBoxAll="checkAllChild"
         @showNotificationDelete="showNotificationDelete"
         @totalCountFunction="totalCountFunction"
+        :reloadData="reloadData"
       />
     </table>
   </div>
@@ -46,7 +47,7 @@ export default {
   components: {
     TableBody,
   },
-  props: ["employee"],
+  props: ["employee", "reloadData"],
   methods: {
     dataFromBodyTable(employee) {
       console.log(employee);
@@ -67,6 +68,9 @@ export default {
       console.log(data);
       this.$emit("totalCountFunction", data)
     }
+  },
+  mounted(){
+    console.log(this.reloadData)
   },
 };
 </script>

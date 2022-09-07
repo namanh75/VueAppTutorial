@@ -46,6 +46,16 @@
     line-height: 22px;
     color: #b1b1b1;
 }
+.m-content-search .m-input-container div.m-filter-search{
+    border: 1px solid var(--main-color);
+
+}
+.m-content-search .m-input-container div.m-filter-search span{
+    color: var(--main-color)
+}
+.m-content-search .m-input-container div.m-filter-search input[type="text"]{
+    color: var(--main-color);
+}
 
 /* content footer */
 .m-content-footer {
@@ -74,6 +84,7 @@
     border: 1px solid #b1b1b1;
     text-align: center;
 }
+
 
 
 /* button delete */
