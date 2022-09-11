@@ -11,7 +11,6 @@
 .m-content-table table thead {
     position: sticky;
     top: 0;
-    background-color: rgba(0, 0, 0, 0.1);
 }
 
 .m-tr-active {
@@ -40,6 +39,7 @@ td {
     border-collapse: collapse;
     text-align: center;
 }
+
 
 tr {
     cursor: pointer;

@@ -74,7 +74,7 @@ export default {
       this.$emit("dataFromBodyTable", employeedata);
     },
     checkItem(employee) {
-      console.log(this);
+      
       if (this.checkList.includes(employee.officerID)) {
         this.checkList = this.checkList.filter(function (element) {
           return element !== employee.officerID;
@@ -86,10 +86,10 @@ export default {
       if (this.checkList.length == this.dataLength) this.checkAll = true;
       else this.checkAll = false;
       this.$emit("checkItem", this.checkAll);
-      console.log(this.checkList);
+      this.$emit("DeleteMany", this.checkList);
     },
     showNotificationDelete(employee) {
-      this.$emit("showNotificationDelete", employee);
+      this.$emit("showNotificationDelete", employee, 1);
     },
     change(is) {
       if (is == 1) return true;
@@ -99,33 +99,43 @@ export default {
   beforeUpdate() {
     if (this.checkBoxAll == false) {
       this.checkList = [];
+      this.$emit("DeleteMany", this.checkList);
     } else {
       this.checkList = [];
       for (var i of this.employees) {
         this.checkList.push(i.officerID);
+        this.$emit("DeleteMany", this.checkList);
       }
     }
+    
   },
   mounted() {
     var me = this;
     try {
       axios
-        .get(`http://localhost:5901/api/v1/Officers/paging?Offset=1&Limit=20&filter=${this.filter}`)
+        .get(
+          `http://localhost:5901/api/v1/Officers/paging?Offset=1&Limit=20&filter=${this.filter}`
+        )
         .then(function (res) {
           me.employees = res.data.data;
           me.totalCount = res.data.totalCount;
           me.$emit("totalCountFunction", me.totalCount);
+          me.dataLength=me.employees.length;
         });
     } catch (error) {
+      console.log("lỗi")
       console.log(error);
     }
+    
   },
   created() {
     this.employees = this.reloadData;
+    
   },
   watch: {
     reloadData() {
       this.employees = this.reloadData;
+      this.dataLength=this.reloadData.length;
     },
   },
 };

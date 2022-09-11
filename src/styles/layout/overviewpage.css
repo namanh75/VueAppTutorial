@@ -25,6 +25,36 @@
     right: 55px;
 }
 
+.m-export{
+    margin-top: 10px;
+    padding-top: 40px;
+    position: fixed;
+    right: 40px;
+    width: 124px;
+    height: 100px;
+    z-index:110;
+    border: 1px solid #b1b1b1;
+}
+.m-content-btn .m-btn-normal-three{
+    position: absolute;
+    right: 2px;
+    z-index: 10;
+    cursor: pointer;
+    background-color: var(--white-color);
+    border: 1px solid #b1b1b1;
+    min-width: 120px;
+}
+.m-content-btn .m-btn-normal-four{
+    margin-top: 40px;
+    position: absolute;
+    right:  2px;
+    z-index: 10;
+    cursor: pointer;
+    background-color: var(--white-color);
+    border: 1px solid #b1b1b1;
+    min-width: 120px;
+}
+
 .m-content-btn .m-btn-ico-mini {
     margin-top: 12px;
     position: absolute;
@@ -64,12 +94,17 @@
     box-shadow: 6px 3px 6px inset rgba(0, 0, 0, 0.08);
     padding-top: 16px;
 }
-
+.m-content-footer span img:hover {
+    background-color: rgb(131, 240, 131)
+}
 .m-content-footer span img {
-    padding: 0 6px;
+    margin-left: 3px;
+    margin-right: 3px;
+    padding: 6px 6px;
     box-sizing: border-box;
     line-height: 64px;
     vertical-align: middle;
+    border-radius: 50%;
 }
 
 .m-content-footer span img {
@@ -84,7 +119,9 @@
     border: 1px solid #b1b1b1;
     text-align: center;
 }
-
+.m-content-footer span input:focus{
+    border: 1px solid var(--main-color);
+}
 
 
 /* button delete */

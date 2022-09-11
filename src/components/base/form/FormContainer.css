@@ -137,7 +137,9 @@
     font-size: 12px;
     font-weight: normal;
 }
-
+.m-input-detail-items >div:hover{
+    background-color: rgb(219, 219, 219, 0.5)
+}
 
 .m-form-add .m-form-content span {
     color: red;
@@ -184,4 +186,8 @@
     width: 127px;
     border: none;
     cursor: pointer;
+}
+
+.m-form-add .m-form-content nav .m-input-detail-items p:hover{
+    background-color: rgb(219, 219, 219, 0.5)
 }

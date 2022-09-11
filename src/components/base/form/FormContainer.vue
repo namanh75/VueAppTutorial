@@ -3,7 +3,7 @@
     <div class="m-form-add">
       <div class="m-form-avt">
         <img src="../../../assets/icons/ic_image.png" alt="" />
-        <p>Chọn ảnh</p>
+        <p class="">Chọn ảnh</p>
         <h3>
           Họ và tên <br />
           Số hiệu cán bộ
@@ -11,7 +11,10 @@
       </div>
       <div class="m-form-content">
         <p>{{ titleForm }}</p>
-        <span @click="btnCloseAddOnclick"
+        <span
+          @click="btnCloseAddOnclick"
+          tabindex="18"
+          @keyup.enter="btnCloseAddOnclick"
           ><img src="../../../assets/icons/ic_X.png" alt=""
         /></span>
         <nav>
@@ -19,6 +22,7 @@
             <label for="">Số hiệu cán bộ<span>*</span></label>
             <div :class="{ 'm-form-add-warning': isValidateEmployeeCode }">
               <input
+                tabindex="1"
                 type="text"
                 class="m-input-check m-focus-input"
                 name="employeeCode"
@@ -26,6 +30,7 @@
                 v-model="dataSave.officerCode"
                 ref="focusInput"
                 @blur="checkEmptyInputEmployeeCode"
+                @keyup="checkEmptyInputEmployeeCode"
               />
             </div>
           </div>
@@ -33,6 +38,7 @@
             <label for="">Họ và tên <span>*</span></label>
             <div :class="{ 'm-form-add-warning': isValidateEmployeeName }">
               <input
+                tabindex="1"
                 type="text"
                 class="m-input-check"
                 name="name"
@@ -40,6 +46,7 @@
                 v-model="dataSave.fullName"
                 ref="employeeName"
                 @blur="checkEmptyInputEmployeeName"
+                @keyup="checkEmptyInputEmployeeName"
               />
             </div>
           </div>
@@ -47,6 +54,7 @@
             <label for="">Số điện thoại</label>
             <div>
               <input
+                tabindex="3"
                 type="text"
                 name="phoneNumber"
                 props="Số điện thoại"
@@ -58,14 +66,19 @@
           <div class="m-input-container">
             <label for="">Email</label>
             <div>
-              <input type="text" v-model="dataSave.email" ref="email" />
+              <input
+                tabindex="4"
+                type="text"
+                v-model="dataSave.email"
+                ref="email"
+              />
             </div>
           </div>
           <div class="m-input-container">
             <label for="">Tổ bộ môn</label>
             <div>
-              <input type="text" v-model="dataSave.groupName" />
-              <span @click="showGroup"
+              <input tabindex="5" type="text" v-model="dataSave.groupName" />
+              <span @click="showGroup" tabindex="6" v-on:keyup.enter="showGroup"
                 ><i class="fa-solid fa-angle-down m-input-icon-1"></i
               ></span>
             </div>
@@ -84,9 +97,13 @@
           </div>
           <div class="m-input-container">
             <label for="">Môn dạy</label>
-            <div @click="showSubject">
-              <div class="m-subject">{{ dataSave.subjectName }}</div>
-              <span><i class="fa-solid fa-angle-down m-input-icon-2"></i></span>
+            <div @click="showSubject" v-on:keyup.enter="showSubject">
+              <div class="m-subject" tabindex="7">
+                {{ dataSave.subjectName }}
+              </div>
+              <span tabindex="8"
+                ><i class="fa-solid fa-angle-down m-input-icon-2"></i
+              ></span>
             </div>
           </div>
 
@@ -99,15 +116,19 @@
               :key="sb"
               @click="subjectClick(sb.subjectName)"
             >
-              <input type="checkbox" />
+              <!-- <input type="checkbox" /> -->
               <p>{{ sb.subjectName }}</p>
             </div>
           </div>
           <div class="m-input-container" id="m-input-max-height">
             <label for="">QL kho, phòng</label>
-            <div @click="showRoom">
-              <div class="m-room">{{ dataSave.storageRoomName }}</div>
-              <span><i class="fa-solid fa-angle-down m-input-icon-3"></i></span>
+            <div @click="showRoom" v-on:keyup.enter="showRoom">
+              <div tabindex="9" class="m-room">
+                {{ dataSave.storageRoomName }}
+              </div>
+              <span tabindex="10"
+                ><i class="fa-solid fa-angle-down m-input-icon-3"></i
+              ></span>
             </div>
           </div>
           <div
@@ -119,7 +140,7 @@
               :key="sr"
               @click="storageRoomClick(sr.storageRoomName)"
             >
-              <input type="checkbox" />
+              <!-- <input type="checkbox" /> -->
               <p>{{ sr.storageRoomName }}</p>
             </div>
           </div>
@@ -129,33 +150,54 @@
             class="m-input-container m-input-downline m-input-check-box-color"
           >
             <input
+              tabindex="11"
               type="checkbox"
               class="m-input-radio-check m-input-downline"
               :checked="change(dataSave.equipmentManagementTraining)"
               @click="equipmentCheck(dataSave.equipmentManagementTraining)"
+              v-on:keyup.enter="
+                equipmentCheck(dataSave.equipmentManagementTraining)
+              "
             />
             <label>Trình độ nghiệp vụ QLTB</label>
             <input
+              tabindex="12"
               type="checkbox"
               class="m-input-radio-check"
               :checked="change(dataSave.workStatus)"
               @click="workStatusCheck(dataSave.workStatus)"
+              v-on:keyup.enter="workStatusCheck(dataSave.workStatus)"
             />
             <label>Đang làm việc</label>
             <label for="">Ngày nghỉ việc</label>
             <div class="m-input-container m-input-container-mini">
-              <input type="text" class="m-input-ico m-input-ico-mini" :value="dataSave.quitDate"/>
-              <span class="m-input-ico-right"
+              <input
+                tabindex="13"
+                type="text"
+                class="m-input-ico m-input-ico-mini"
+                :value="dataSave.quitDate"
+              />
+              <span class="m-input-ico-right" tabindex="14"
                 ><i class="fa-solid fa-calendar-days"></i
               ></span>
             </div>
           </div>
         </div>
         <div class="m-form-btn-close">
-          <button class="m-btn m-btn-normal-two" @click="btnCloseAddOnclick">
+          <button
+            class="m-btn m-btn-normal-two"
+            @click="btnCloseAddOnclick"
+            v-on:keyup.enter="btnCloseAddOnclick"
+            tabindex="15"
+          >
             Đóng
           </button>
-          <button class="m-btn m-btn-normal-one" @click="submitData">
+          <button
+            class="m-btn m-btn-normal-one"
+            @click="submitData"
+            v-on:keyup.enter="submitData"
+            tabindex="16"
+          >
             Lưu
           </button>
         </div>
@@ -184,6 +226,9 @@ export default {
         this.isValidateEmployeeCode = false;
       }
     },
+    // checkKeyUpEmptyInputEmployeeCode(){
+
+    // }
     checkEmptyInputEmployeeName() {
       var val = this.$refs.employeeName.value;
       if (val == "") {
@@ -226,6 +271,7 @@ export default {
     },
 
     submitData() {
+      var me = this;
       try {
         this.warningString = "Không được để trống:";
         var codeVal = this.$refs.focusInput.value;
@@ -233,7 +279,7 @@ export default {
         var phoneVal = this.$refs.phoneNumber.value;
         var emailVal = this.$refs.email.value;
         if (phoneVal == "") this.dataSave.phoneNumber = "chưa có";
-        if (emailVal == "") this.dataSave.email = "user@example.com";
+        if (emailVal == "") this.dataSave.email = "user@gmail.com"
         this.isShowToastSuccess = true;
         if (nameVal == "") {
           this.isShowToastSuccess = false;
@@ -248,21 +294,39 @@ export default {
             this.dataSave.groupID = null;
             this.dataSave.subjectID = null;
             this.dataSave.storageRoomID = null;
-            this.dataSave.identifyNumber = "123456789";
-
             this.dataSave.identifyNumber = "chưa có";
+
             axios
               .post("http://localhost:5901/api/v1/Officers", this.dataSave)
               .then((response) => {
-                console.log(response);
+                console.log(response.data.errors);
                 this.$emit(
                   "showToast",
                   this.isShowToastSuccess,
                   this.warningString
                 );
+              })
+              .catch((e) => {
+                if (e.response.data.errors.Email) {
+                  me.warningString = "Sai định dạng email";
+                  me.isShowToastSuccess = false;
+                  this.$emit(
+                    "showToast",
+                    me.isShowToastSuccess,
+                    me.warningString
+                  );
+                } else {
+                  me.warningString += "Có lỗi xảy ra ở server";
+                  this.$emit(
+                    "showToast",
+                    me.isShowToastSuccess,
+                    me.warningString
+                  );
+                }
               });
           }
           if (this.flagForm == 2) {
+            console.log(this.dataSave);
             axios
               .put(
                 `http://localhost:5901/api/v1/Officers/${this.dataSelected.officerID}`,
@@ -275,13 +339,30 @@ export default {
                   this.isShowToastSuccess,
                   this.warningString
                 );
+              })
+              .catch((e) => {
+                if (e.response.data.errors.Email) {
+                  me.warningString = "Sai định dạng email";
+                  me.isShowToastSuccess = false;
+                  this.$emit(
+                    "showToast",
+                    me.isShowToastSuccess,
+                    me.warningString
+                  );
+                } else {
+                  me.warningString += "Có lỗi xảy ra ở server";
+                  this.$emit(
+                    "showToast",
+                    me.isShowToastSuccess,
+                    me.warningString
+                  );
+                }
               });
           }
         } else {
           this.$emit("showToast", this.isShowToastSuccess, this.warningString);
         }
       } catch (e) {
-        console.log(e);
         this.isShowToastSuccess = false;
         this.warningString = "Có lỗi xảy ra ở server";
         this.$emit("showToast", this.isShowToastSuccess, this.warningString);
@@ -294,7 +375,7 @@ export default {
     },
     workStatusCheck(workStatus) {
       if (workStatus == 1) return (this.dataSave.workStatus = 0);
-      else if (workStatus == 0) return (this.dataSave.workStatus = 1);
+      else return (this.dataSave.workStatus = 1);
     },
     equipmentCheck(equipmentManagement) {
       if (equipmentManagement == 1)
@@ -344,9 +425,6 @@ export default {
       console.log(err);
     }
   },
-  // updated() {
-  //   this.dataSelect = "nam";
-  // },
 };
 </script>
 

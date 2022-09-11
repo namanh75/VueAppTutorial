@@ -30,6 +30,7 @@
         @showNotificationDelete="showNotificationDelete"
         @totalCountFunction="totalCountFunction"
         :reloadData="reloadData"
+        @DeleteMany="DeleteMany"
       />
     </table>
   </div>
@@ -42,12 +43,19 @@ export default {
     return {
       checkAll: false,
       checkAllChild: false,
+      reDataLength:0
     };
   },
   components: {
     TableBody,
   },
-  props: ["employee", "reloadData"],
+  props: ["employee", "reloadData", "reUnCheck"],
+  watch: {
+    reUnCheck() {
+      this.checkAllChild = false;
+      this.checkAll = false;
+    },
+  },
   methods: {
     dataFromBodyTable(employee) {
       console.log(employee);
@@ -61,16 +69,19 @@ export default {
       this.checkAll = !this.checkAll;
       this.checkAllChild = this.checkAll;
     },
-    showNotificationDelete(employee){
-      this.$emit("showNotificationDelete", employee)
+    showNotificationDelete(employee, flag) {
+      this.$emit("showNotificationDelete", employee, flag);
     },
-    totalCountFunction(data){
+    totalCountFunction(data) {
       console.log(data);
-      this.$emit("totalCountFunction", data)
-    }
+      this.$emit("totalCountFunction", data);
+    },
+    DeleteMany(checkList) {
+      this.$emit("DeleteMany", checkList);
+    },
   },
-  mounted(){
-    console.log(this.reloadData)
+  mounted() {
+    console.log(this.reloadData);
   },
 };
 </script>
