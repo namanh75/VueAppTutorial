@@ -1,11 +1,11 @@
 <template>
-  <nav class="m-toast-container-err m-toast-container-error">
-    <button class="m-toast">
-      <i class="fa-solid fa-triangle-exclamation"></i>
-      <span>Không được để trống</span>
-      <!-- <i class="fa-solid fa-xmark fa-xmark-cancel"></i> -->
-    </button>
-  </nav>
+  <div class="toast-box" hidden>
+        <div class="toast-item toast-item--warning" >
+            <div class="toast-icon toast-icon--warning "><img src="../../assets/icon/ic_ToastMessage_Warning.png" alt=""></div>
+            <div class="toast-text">Cảnh báo</div>
+            <span>Warning Message</span>
+            <div class="toast-close"><i class="fa-solid fa-xmark"></i></div>
+        </div>
 </template>
 
 <script>

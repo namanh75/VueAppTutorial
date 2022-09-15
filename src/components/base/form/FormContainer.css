@@ -123,6 +123,7 @@
     display: inline-block
 }
 
+
 .m-form-add .m-form-content nav .m-input-detail-items-3 {
     left: 357px;
     top: 240px;
@@ -138,6 +139,10 @@
     font-weight: normal;
 }
 .m-input-detail-items >div:hover{
+    background-color: rgb(219, 219, 219, 0.5)
+    
+}
+.m-input-detail-items >div:active{
     background-color: rgb(219, 219, 219, 0.5)
 }
 
@@ -179,6 +184,7 @@
     width: 387px;
     border: none;
     cursor: pointer;
+    color: #000000;
 }
 
 .m-input-container div.m-subject {
@@ -186,6 +192,7 @@
     width: 127px;
     border: none;
     cursor: pointer;
+    color: #000000;
 }
 
 .m-form-add .m-form-content nav .m-input-detail-items p:hover{

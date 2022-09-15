@@ -31,6 +31,7 @@
         @totalCountFunction="totalCountFunction"
         :reloadData="reloadData"
         @DeleteMany="DeleteMany"
+        @loadingFunction="loadingFunction"
       />
     </table>
   </div>
@@ -43,7 +44,7 @@ export default {
     return {
       checkAll: false,
       checkAllChild: false,
-      reDataLength:0
+      reDataLength: 0,
     };
   },
   components: {
@@ -57,31 +58,58 @@ export default {
     },
   },
   methods: {
+
+    /**
+     * Lấy dữ liệu từ body
+     */
     dataFromBodyTable(employee) {
       console.log(employee);
       this.$emit("dataFromTable", employee);
       this.$emit("showFormDetail", true);
     },
+
+    /**
+     * xử lý check box từng dòng
+     */
     checkItem(checkAll) {
       this.checkAll = checkAll;
     },
+
+    /**
+     * xử lý check box toàn bộ
+     */
     checkBoxAll() {
       this.checkAll = !this.checkAll;
       this.checkAllChild = this.checkAll;
     },
+
+    /**
+     * Hiển thị thông báo xóa
+     */
     showNotificationDelete(employee, flag) {
       this.$emit("showNotificationDelete", employee, flag);
     },
+
+    /**
+     * xử lý emit tổng số toàn bộ nhân viên
+     */
     totalCountFunction(data) {
-      console.log(data);
       this.$emit("totalCountFunction", data);
     },
+
+    /**
+     * xử lý emit danh sách xóa hiện tại đang chọn
+     */
     DeleteMany(checkList) {
       this.$emit("DeleteMany", checkList);
     },
-  },
-  mounted() {
-    console.log(this.reloadData);
+
+    /**
+     * hiệu ứng loading 
+     */
+    loadingFunction(isLoading){
+      this.$emit("loadingFunction", isLoading);
+    }
   },
 };
 </script>

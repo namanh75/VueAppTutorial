@@ -20,23 +20,18 @@
 
 
 @font-face {
-    font-family: Google Sans;
-    src: url("../assets/fonts/OpenSans-Bold.woff")
+    font-family: MISA Fonts;
+    src: url(../assets/fonts/OpenSans-Regular.ttf);
 }
 
 @font-face {
-    font-family: Google Sans;
-    src: url("../assets/fonts/OpenSans-Bold.woff2")
+    font-family: MISA Font Bold;
+    src: url(..//assets/fonts/OpenSans-Bold.ttf);
 }
 
 @font-face {
-    font-family: Google Sans;
-    src: url("../assets/fonts/OpenSans-BoldItalic.ttf")
-}
-
-@font-face {
-    font-family: Google Sans;
-    src: url("../assets/fonts/OpenSans-Bold.ttf")
+    font-family: MISA Font Italic;
+    src: url(../assets/fonts/OpenSans-Italic.ttf);
 }
 
 .layout {
@@ -67,7 +62,7 @@ body {
     font-weight: none;
     font-size: 13px;
     box-sizing: border-box;
-    font-weight: none;
+    font-family: MISA Fonts;
 }
 
 input[type="text"] {

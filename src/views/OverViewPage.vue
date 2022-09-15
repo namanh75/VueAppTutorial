@@ -58,6 +58,7 @@
       :reloadData="reloadData"
       @DeleteMany="DeleteMany"
       :reUnCheck="reUnCheck"
+      @loadingFunction="loadingFunction"
     />
 
     <div class="m-content-footer" v-if="!isNodata">
@@ -78,7 +79,7 @@
       </span>
       <span>
         <!-- {{ CheckNullAxiosFunction(totalPage) }} -->
-        {{ currentPage }}/ {{ totalPage}} trang ({{ totalCount }} giáo viên)
+        {{ currentPage }}/ {{ totalPage }} trang ({{ totalCount }} giáo viên)
       </span>
     </div>
   </div>
@@ -91,6 +92,8 @@
     :titleForm="titleForm"
     :flagForm="flagForm"
     @showToast="showToast"
+    @resetDataForm="resetDataForm"
+    @loadingFunction="loadingFunction"
   />
 
   <nav class="m-more-delete" v-show="isBtnDelete" @click="notificationDelete">
@@ -108,10 +111,13 @@
   <ToastMessageError v-show="isShowToastError" :warningString="warningString" />
 
   <!-- Toast PopUp Successfully -->
-  <ToastMessageSuccess v-show="isShowToastSuccess" />
+  <ToastMessageSuccess
+    v-show="isShowToastSuccess"
+    :warningString="warningString"
+  />
 
   <!-- Loading Page Animation -->
-  <LoadingPage />
+  <LoadingPage :isLoading="isLoading" />
 </template>
 <script>
 import axios from "axios";
@@ -123,6 +129,8 @@ import ToastMessageError from "../components/base/popup/ToastMessageError.vue";
 import ToastMessageSuccess from "../components/base/popup/ToastMessageSuccess.vue";
 import LoadingPage from "../components/base/filters/LoadingPage.vue";
 import NodataContainer from "../components/base/references/NodataContainer.vue";
+
+import * as MISA_RESOURCE from "../scripts/MISAResource";
 
 export default {
   name: "OverView",
@@ -138,41 +146,54 @@ export default {
   props: ["employee"],
   data() {
     return {
-      isShowFormDetail: false,
-      titleForm: null,
-      dataSelected: {},
-      isBtnDelete: false,
-      isNotificationDelete: false,
-      isShowToastSuccess: false,
-      isShowToastError: false,
-      warningString: "",
-      employeeDeleteSelect: null,
-      flagForm: null,
-      reloadData: null,
-      totalCount: null,
-      totalPage: null,
-      currentPage: 1,
-      filter: "1",
-      keySearch: "",
-      isSearchData: false,
-      deleteArrayData: null,
-      flagDelete: null,
-      reUnCheck: false,
-      isShowExport: false,
-      isNodata: false,
+      isShowFormDetail: false, //hiển thị form thêm mới/chỉnh sửa
+      titleForm: MISA_RESOURCE.FORM.ADD.TITLE, // tiêu đề form
+      dataSelected: {}, //data nhận được từ tableBody
+      isBtnDelete: false, // show nút xóa toàn bộ
+      isNotificationDelete: false, // hiển thị thông báo xóa
+      isShowToastSuccess: false, // hiển thị toast message thành công
+      isShowToastError: false, // hiển thị toast message thất bại
+      warningString: "", // nội dung toast message
+      employeeDeleteSelect: null, // nhân viên hiện tại đang được chọn
+      flagForm: null, //1 - form thêm mới, 2 - form chỉnh sửa
+      reloadData: null, // cập nhật dữ liệu khi thêm mới, chỉnh sửa hoặc chuyển trang
+      totalCount: null, // tổng số nhân viên hiện tại
+      totalPage: null, // tổ số phân trang
+      currentPage: 1, // trang hiện tại
+      filter: "1", // bộ lọc tìm kiếm
+      keySearch: "", // từ khóa tìm kiếm
+      isSearchData: false, // kiểm tra dữ liệu trong ô tìm kiếm
+      deleteArrayData: null, // danh sách các cán bộ nhân viên xóa (xóa nhiều)
+      flagDelete: null, // 1 - Xóa 1 người, 2 - Xóa nhiều
+      reUnCheck: false, //bỏ check box khi chuyển trang
+      isNodata: false, // kiểm tra dữ liệu trả về nếu trống thì hiển thị giao diện không dữ liệu
+      isLoading: true,
+      timeWait: 500,
     };
   },
   methods: {
+    /**
+     * Hiển thị form thêm mới + tiêu đề form
+     */
     btnAddNewOfficer() {
       try {
         this.showFormDetail(true);
         this.dataSelected = {};
-        this.flagForm = 1;
-        this.titleForm = "Thêm mới cán bộ nhân viên";
+        // axios
+        //   .get("http://localhost:5901/api/v1/Officers/new-code")
+        //   .then((res) => {
+        //     this.dataSelected.officerCode = res.data;
+        //   });
+
+        this.flagForm = MISA_RESOURCE.FORM.ADD.FLAG;
+        this.titleForm = MISA_RESOURCE.FORM.ADD.TITLE;
       } catch (e) {
         console.log(e);
       }
     },
+    /**
+     *  Hiển thị Form thêm mới
+     */
     showFormDetail(isShow) {
       try {
         this.isShowFormDetail = isShow;
@@ -180,21 +201,37 @@ export default {
         console.log(e);
       }
     },
+    /**
+     * Đẩy dữ liệu từ table vào form
+     */
     dataFromTable(employee) {
       this.dataSelected = employee;
-      this.flagForm = 2;
-      this.titleForm = "Chỉnh sửa hồ sơ cán bộ nhân viên";
+      this.flagForm = MISA_RESOURCE.FORM.EDIT.FLAG;
+      this.titleForm = MISA_RESOURCE.FORM.EDIT.TITLE;
     },
+    /**
+     * Hiển thi biểu tượng xóa toàn bộ
+     */
     btnDeleteClick() {
       this.isBtnDelete = !this.isBtnDelete;
+      setTimeout(() => {
+        this.isBtnDelete = false;
+      }, 5 * 1000);
       this.flagDelete = 2;
     },
+    /**
+     * Hiển thị cửa sổ thông báo xóa
+     */
     notificationDelete(e) {
       this.isBtnDelete = false;
       this.isNotificationDelete = e;
     },
+    /**
+     * Thông báo Toast message
+     */
     showToast(isShowToastSuccess, warningString) {
       var me = this;
+      me.warningString = warningString;
       if (isShowToastSuccess == true) {
         this.isShowToastError = false;
         this.isShowToastSuccess = true;
@@ -223,13 +260,16 @@ export default {
         }, 3000);
       }
     },
+    /**
+     * Xử lý logic phân trang
+     */
     totalCountFunction(data) {
       this.totalCount = data;
       this.totalPage = data / 20;
       this.totalPage = Math.ceil(this.totalPage);
     },
     /**
-     * chuyển trang
+     * chuyển trang đầu
      */
     firstPageClick() {
       if (this.currentPage != 1) {
@@ -251,6 +291,9 @@ export default {
         }
       }
     },
+    /**
+     * Chuyển trang trước
+     */
     backPageClick() {
       if (this.currentPage > 1) {
         this.currentPage = this.currentPage - 1;
@@ -271,6 +314,9 @@ export default {
         }
       }
     },
+    /**
+     * Chuyển trang tiếp theo
+     */
     nextPageClick() {
       if (this.currentPage < this.totalPage) {
         this.currentPage = this.currentPage + 1;
@@ -291,6 +337,9 @@ export default {
         }
       }
     },
+    /**
+     * Chuyển trang cuối
+     */
     lastPageClick() {
       if (this.currentPage != this.totalPage) {
         this.currentPage = this.totalPage;
@@ -311,6 +360,9 @@ export default {
         }
       }
     },
+    /**
+     * Cập nhật dữ liệu bảng khi chuyển trang
+     */
     pagingSelect() {
       var me = this;
       if (this.currentPage >= 1 && this.currentPage <= this.totalPage) {
@@ -387,7 +439,7 @@ export default {
       console.log(this.employeeDeleteSelect);
       this.isNotificationDelete = true;
       this.flagDelete = flag;
-      console.log(employee)
+      console.log(employee);
     },
     /**
      * Xác nhận xóa
@@ -418,6 +470,7 @@ export default {
               this.isNotificationDelete = false;
               //thông báo xóa thành công hay thất bại
               this.isShowToastSuccess = true;
+              this.warningString="Đã xóa nhân viên"
               setTimeout(() => {
                 this.isShowToastSuccess = false;
               }, 3000);
@@ -429,47 +482,65 @@ export default {
             arraySend.push(me.deleteArrayData[i]);
           }
           console.log(arraySend);
-          axios
-            .post(
-              `http://localhost:5901/api/v1/Officers/ManyDelete?size=${me.deleteArrayData.length}`,
-              arraySend
-            )
-            .then((response) => {
-              console.log(response);
-              axios
-                .get(
-                  `http://localhost:5901/api/v1/Officers/paging?Offset=${
-                    (me.currentPage - 1) * 20 + 1
-                  }&Limit=20&filter=${this.filter}`
-                )
-                .then((res) => {
-                  me.reloadData = res.data.data;
-                  me.totalCount = res.data.totalCount;
-                  me.totalCountFunction(me.totalCount);
-                  me.reUnCheck = true;
-                  //tắt thông Báo
-                  me.isNotificationDelete = false;
-                  //thông báo xóa thành công hay thất bại
-                  me.isShowToastSuccess = true;
-                  setTimeout(() => {
-                    me.isShowToastSuccess = false;
-                  }, 3000);
-                });
-            })
-            .catch((e) => {
-              console.log(e);
-              me.isNotificationDelete = false;
-              //thông báo xóa thành công hay thất bại
-              me.isShowToastError = true;
-              setTimeout(() => {
-                me.isShowToastError = false;
-              }, 3000);
-            });
+          if (arraySend.length == 0) {
+            me.isNotificationDelete = false;
+            //thông báo xóa thành công hay thất bại
+            me.isShowToastError = true;
+            me.warningString = "Chưa có cán bộ nào được chọn";
+            setTimeout(() => {
+              me.isShowToastError = false;
+            }, 3000);
+          } else {
+            axios
+              .post(
+                `http://localhost:5901/api/v1/Officers/ManyDelete?size=${me.deleteArrayData.length}`,
+                arraySend
+              )
+              .then((response) => {
+                console.log(response);
+                me.warningString="Đã xóa nhân viên"
+                axios
+                  .get(
+                    `http://localhost:5901/api/v1/Officers/paging?Offset=${
+                      (me.currentPage - 1) * 20 + 1
+                    }&Limit=20&filter=${this.filter}`
+                  )
+                  .then((res) => {
+                    me.reloadData = res.data.data;
+                    me.totalCount = res.data.totalCount;
+                    me.totalCountFunction(me.totalCount);
+                    me.reUnCheck = true;
+                    //tắt thông Báo
+                    me.isNotificationDelete = false;
+                    //thông báo xóa thành công hay thất bại
+                    
+                    me.isShowToastSuccess = true;
+                    
+                    setTimeout(() => {
+                      me.isShowToastSuccess = false;
+                    }, 3000);
+                    
+                  });
+              })
+              .catch((e) => {
+                console.log(e);
+                me.isNotificationDelete = false;
+                //thông báo xóa thành công hay thất bại
+                me.isShowToastError = true;
+                me.warningString = "Lỗi sever";
+                setTimeout(() => {
+                  me.isShowToastError = false;
+                }, 3000);
+              });
+          }
         }
       } catch (e) {
         console.log(e);
       }
     },
+    /**
+     * Tìm kiếm qua ô input nhập (theo SHCB và họ tên)
+     */
     searchData() {
       var me = this;
       me.reUnCheck = !me.reUnCheck;
@@ -496,11 +567,21 @@ export default {
         console.log(error);
       }
     },
+    /**
+     * cập nhật danh sách xóa nhiều
+     */
     DeleteMany(checkList) {
       this.deleteArrayData = checkList;
     },
 
+    /**
+     * Xuất file excel theo paging
+     */
     exportExcelCurrentPage() {},
+
+    /**
+     * Xuất toàn bộ Database theo bộ lọc tìm kiếm
+     */
     exportExcelAllPage() {
       var me = this;
       try {
@@ -515,6 +596,32 @@ export default {
       } catch (e) {
         console.log(e);
       }
+    },
+    /**
+     *   Cập nhật dữ liệu từ form
+     */
+    resetDataForm() {
+      console.log("hủy bỏ")
+      var me = this;
+      axios
+        .get(
+          `http://localhost:5901/api/v1/Officers/paging?Offset=${
+            (me.currentPage - 1) * 20 + 1
+          }&Limit=20&filter=${this.filter}`
+        )
+        .then((res) => {
+          me.reloadData = res.data.data;
+          me.totalCount = res.data.totalCount;
+          me.totalCountFunction(me.totalCount);
+        });
+    },
+
+    /**
+     * hiệu ứng loading
+     */
+    loadingFunction(isLoading) {
+      console.log(isLoading);
+      this.isLoading = isLoading;
     },
   },
 };

@@ -78,7 +78,11 @@
             <label for="">Tổ bộ môn</label>
             <div>
               <input tabindex="5" type="text" v-model="dataSave.groupName" />
-              <span @click="showGroup" tabindex="6" v-on:keyup.enter="showGroup"
+              <span
+                @click="showGroup"
+                tabindex="6"
+                v-on:keyup.enter="showGroup"
+                @keyup.down="focusComboBox(1, true)"
                 ><i class="fa-solid fa-angle-down m-input-icon-1"></i
               ></span>
             </div>
@@ -173,13 +177,13 @@
             <div class="m-input-container m-input-container-mini">
               <input
                 tabindex="13"
-                type="text"
+                type="date"
                 class="m-input-ico m-input-ico-mini"
-                :value="dataSave.quitDate"
+                v-model="dataSave.quitDate"
               />
-              <span class="m-input-ico-right" tabindex="14"
+              <!-- <span class="m-input-ico-right" tabindex="14"
                 ><i class="fa-solid fa-calendar-days"></i
-              ></span>
+              ></span> -->
             </div>
           </div>
         </div>
@@ -207,17 +211,42 @@
 </template>
 <script>
 import axios from "axios";
+
 export default {
   name: "FormContainer",
   props: ["dataSelected", "titleForm", "flagForm"],
+  watch: {
+    dataSelected() {
+      this.dataSave = this.dataSelected;
+      console.log("dataselect thay đổi");
+    },
+  },
   methods: {
+    /**
+     * Format ngày giờ
+     */
+    formatDate(date) {
+      console.log(date);
+      if (date) this.dataSave.quitDate = date.slice(0, 10);
+    },
+
+    /**
+     *  Đóng form
+     */
     btnCloseAddOnclick() {
       try {
         this.$emit("showFormDetail", false);
+        if (this.flagForm == 2) {
+          this.$emit("resetDataForm");
+        }
       } catch (e) {
         console.log(e);
       }
     },
+
+    /**
+     * validate SHCB có trống không
+     */
     checkEmptyInputEmployeeCode() {
       var val = this.$refs.focusInput.value;
       if (val == "") {
@@ -226,9 +255,10 @@ export default {
         this.isValidateEmployeeCode = false;
       }
     },
-    // checkKeyUpEmptyInputEmployeeCode(){
 
-    // }
+    /**
+     * validate họ tên nhân viên có trống không
+     */
     checkEmptyInputEmployeeName() {
       var val = this.$refs.employeeName.value;
       if (val == "") {
@@ -240,37 +270,62 @@ export default {
       }
     },
 
+    /**
+     * hiển thị combo box tổ bộ môn
+     */
     showGroup() {
       this.isShowSubject = false;
       this.isShowRoom = false;
       this.isShowGroup = !this.isShowGroup;
     },
+
+    /**
+     * Hiển thị combo box môn học
+     */
     showSubject() {
       this.isShowGroup = false;
       this.isShowRoom = false;
       this.isShowSubject = !this.isShowSubject;
     },
+
+    /**
+     * Hiển thị combo box kho phòng
+     */
     showRoom() {
       this.isShowSubject = false;
       this.isShowGroup = false;
       this.isShowRoom = !this.isShowRoom;
     },
 
+    /**
+     * Xử lý lựa chọn tổ bộ môn
+     */
     groupClick(gr) {
       this.groupSelected = gr;
       this.dataSave.groupName = gr;
       this.isShowGroup = false;
     },
+
+    /**
+     * Xử lý lựa chọn môn học
+     */
     subjectClick(sb) {
       this.dataSave.subjectName = sb;
       this.isShowSubject = false;
     },
+
+    /**
+     * Xử lý lựa chọn kho phòng
+     */
     storageRoomClick(sr) {
       this.dataSave.storageRoomName = sr;
       this.isShowRoom = false;
     },
 
-    submitData() {
+    /**
+     *  Xử lý sự kiện submit dữ liệu
+     */
+    async submitData() {
       var me = this;
       try {
         this.warningString = "Không được để trống:";
@@ -278,8 +333,8 @@ export default {
         var nameVal = this.$refs.employeeName.value;
         var phoneVal = this.$refs.phoneNumber.value;
         var emailVal = this.$refs.email.value;
-        if (phoneVal == "") this.dataSave.phoneNumber = "chưa có";
-        if (emailVal == "") this.dataSave.email = "user@gmail.com"
+        if (phoneVal == "") this.dataSave.phoneNumber = "trống";
+        if (emailVal == "") this.dataSave.email = "user@gmail.com";
         this.isShowToastSuccess = true;
         if (nameVal == "") {
           this.isShowToastSuccess = false;
@@ -300,11 +355,9 @@ export default {
               .post("http://localhost:5901/api/v1/Officers", this.dataSave)
               .then((response) => {
                 console.log(response.data.errors);
-                this.$emit(
-                  "showToast",
-                  this.isShowToastSuccess,
-                  this.warningString
-                );
+                me.warningString = "Thêm mới nhân viên thành công";
+                me.$emit("loadingFunction", false);
+                me.$emit("showToast", true, me.warningString);
               })
               .catch((e) => {
                 if (e.response.data.errors.Email) {
@@ -326,7 +379,7 @@ export default {
               });
           }
           if (this.flagForm == 2) {
-            console.log(this.dataSave);
+            
             axios
               .put(
                 `http://localhost:5901/api/v1/Officers/${this.dataSelected.officerID}`,
@@ -334,23 +387,32 @@ export default {
               )
               .then((res) => {
                 console.log(res);
-                this.$emit(
-                  "showToast",
-                  this.isShowToastSuccess,
-                  this.warningString
-                );
+                me.warningString = "Chỉnh sửa nhân viên thành công";
+                me.$emit("showToast", true, this.warningString);
               })
               .catch((e) => {
+                me.warningString = "";
                 if (e.response.data.errors.Email) {
-                  me.warningString = "Sai định dạng email";
+                  me.warningString += "Sai định dạng email";
                   me.isShowToastSuccess = false;
+
+                  this.$emit(
+                    "showToast",
+                    me.isShowToastSuccess,
+                    me.warningString
+                  );
+                } else if (e.response.data.errors.PhoneNumber) {
+                  me.warningString += "Số điện thoại không được trống";
+                  me.isShowToastSuccess = false;
+
                   this.$emit(
                     "showToast",
                     me.isShowToastSuccess,
                     me.warningString
                   );
                 } else {
-                  me.warningString += "Có lỗi xảy ra ở server";
+                  me.warningString = "Có lỗi xảy ra ở server";
+                  me.isShowToastSuccess = false;
                   this.$emit(
                     "showToast",
                     me.isShowToastSuccess,
@@ -369,40 +431,70 @@ export default {
       }
       console.log(this.dataSave);
     },
+
+    /**
+     * Thay đổi kiểu dữ liệu int sang boolean
+     */
     change(is) {
       if (is == 1) return true;
       else return false;
     },
+
+    /**
+     * xử lý check tình trạng làm việc
+     */
     workStatusCheck(workStatus) {
       if (workStatus == 1) return (this.dataSave.workStatus = 0);
       else return (this.dataSave.workStatus = 1);
     },
+
+    /** xử lý check QLTB
+     *
+     */
     equipmentCheck(equipmentManagement) {
       if (equipmentManagement == 1)
         return (this.dataSave.equipmentManagementTraining = 0);
       else return (this.dataSave.equipmentManagementTraining = 1);
     },
+    /**
+     * Xử lý tab index
+     */
+    // focusComboBox(flag, reset) {
+    //   console.log(flag);
+    //   console.log(reset);
+    //   // console.log(this.groupData.length)
+    //   // if(reset==true) this.currentBox=0;
+    //   console.log(this.currentBox);
+    //   console.log(this.groupData[this.currentBox]);
+    //   // if(this.currentBox<this.groupData.length){
+    //   //   this.currentBox=0
+    //   // }
+    //   this.dataSave.groupName = this.groupData[this.currentBox].groupName;
+    //   this.currentBox += 1;
+    // },
   },
   data() {
     return {
-      isValidateEmployeeCode: null,
-      isValidateEmployeeName: null,
-      dataSelect: null,
-      dataSave: null,
-      warningString: "",
-      isShowToastWarning: false,
-      isShowToastSuccess: false,
-      isShowSubject: false,
-      isShowGroup: false,
-      isShowRoom: false,
+      isValidateEmployeeCode: null, // validate SHCB
+      isValidateEmployeeName: null, // validate họ tên
+      dataSelect: null, //dữ liệu nhận được từ bảng
+      dataSave: null, //dữ liệu khi submit form
+      warningString: "", // thông báo toast mesage
+      isShowToastWarning: false, // hiển thị thông báo lỗi
+      isShowToastSuccess: false, // hiển thị thông báo thành công
+      isShowSubject: false, //show combo box môn học
+      isShowGroup: false, //show combo box tổ bộ môn
+      isShowRoom: false, //show combo box kho phòng
       groupSelected: null,
-      groupData: [],
-      subjectData: [],
-      storageRoomData: [],
+      groupData: [], // danh sách tổ bộ môn
+      subjectData: [], //danh sách môn học
+      storageRoomData: [], // danh sách kho phòng
+      currentBox: 0,
     };
   },
   created() {
     this.dataSave = this.dataSelected;
+    this.formatDate(this.dataSave.quitDate);
   },
   mounted() {
     this.$refs.focusInput.focus();
@@ -421,6 +513,12 @@ export default {
         .then(function (response) {
           me.subjectData = response.data;
         });
+      // .catch((error) => {
+      //   console.log(error);
+      //   me.warningString = "Sai định dạng email";
+      //   me.isShowToastSuccess = false;
+      //   me.$emit("showToast", me.isShowToastSuccess, me.warningString);
+      // });
     } catch (err) {
       console.log(err);
     }

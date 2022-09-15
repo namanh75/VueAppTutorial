@@ -1,11 +1,14 @@
 <template>
-  <nav class="m-toast-container m-toast-container-error">
-    <button class="m-toast">
-      <i class="fa-solid fa-triangle-exclamation"></i>
-      <span>{{warningString}}</span>
-      <!-- <i class="fa-solid fa-xmark fa-xmark-cancel"></i> -->
-    </button>
-  </nav>
+  <div class="toast-box" >
+    <div class="toast-item toast-item--error">
+      <div class="toast-icon toast-icon--error">
+        <img src="../../../assets/icons/ic_ToastMessage_Fail.png" alt="" />
+      </div>
+      <div class="toast-text">Lỗi</div>
+      <span>{{ warningString }}</span>
+      
+    </div>
+  </div>
 </template>
 
 <script>
@@ -16,16 +19,5 @@ export default {
 
 <style scoped>
 @import url("./ToastMessage.css");
-.m-toast{
-  border-left: 3px solid #d73838;
-}
-.m-toast-container-error .fa-triangle-exclamation {
-  background-color: #d73838;
-  color: white;
-}
-.m-toast-container-error .fa-xmark-cancel {
-  cursor: pointer;
-  font-size: 24px;
-  color: #d73838;
-}
+
 </style>

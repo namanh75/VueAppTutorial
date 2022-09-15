@@ -75,7 +75,9 @@ table tr td span img {
 }
 
 thead tr {
-    background-color: #ffffff;
+    background-color: #EAECEF;
+    position: relative;
+    z-index: 50;
 }
 
 .m-content-table .m-content-table-column-1 {

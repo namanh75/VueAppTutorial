@@ -21,9 +21,17 @@
 <script>
 export default {
   methods: {
+    
+    /**
+     * Tắt cửa sổ xóa  
+    */
     closeNotificationDelete() {
       this.$emit("notificationDelete", false);
     },
+
+    /**
+     * Xác nhận xóa  
+    */
     confirmNotificationDelete(){
       this.$emit("confirmNotificationDelete")
     }

@@ -55,26 +55,33 @@
 
 <script>
 import axios from "axios";
+// import * as APIMethods from "../../../scripts/APIMethods";
 
 export default {
   data() {
     return {
-      isChecked: false,
-      employees: null,
-      totalCount: null,
-      dataLength: 20,
-      checkList: [],
-      checkAll: false,
-      filter: "1",
+      isChecked: false, //kiểm tra check box
+      employees: null, // danh sách cán bộ nhân viên
+      totalCount: null, // tổ số nhân viên
+      dataLength: 20, //số nhân viên có trong trang hiện tại (max 20)
+      checkList: [], //check list người dùng chọn
+      checkAll: false, //check box toàn bộ
+      filter: "1", //bộ lọc tìm kiếm
     };
   },
   props: ["employee", "checkBoxAll", "reloadData"],
   methods: {
+    /**
+     * Emit dữ liệu từ table lên form
+     */
     rowOnDblClick(employeedata) {
       this.$emit("dataFromBodyTable", employeedata);
     },
+
+    /**
+     *  xử lý check box từng dòng
+     */
     checkItem(employee) {
-      
       if (this.checkList.includes(employee.officerID)) {
         this.checkList = this.checkList.filter(function (element) {
           return element !== employee.officerID;
@@ -82,20 +89,31 @@ export default {
       } else {
         this.checkList.push(employee.officerID);
       }
-
       if (this.checkList.length == this.dataLength) this.checkAll = true;
       else this.checkAll = false;
       this.$emit("checkItem", this.checkAll);
       this.$emit("DeleteMany", this.checkList);
     },
+
+    /**
+     *  xử lý checkbox toàn bộ
+     */
     showNotificationDelete(employee) {
       this.$emit("showNotificationDelete", employee, 1);
     },
+
+    /**
+     * Thay giá trị 0,1 thành biểu tượng x trong giao diện
+     */
     change(is) {
       if (is == 1) return true;
       return false;
     },
   },
+
+  /**
+   * Xử lý Danh sách xóa nhiều
+   */
   beforeUpdate() {
     if (this.checkBoxAll == false) {
       this.checkList = [];
@@ -107,11 +125,22 @@ export default {
         this.$emit("DeleteMany", this.checkList);
       }
     }
-    
   },
+
+  /**
+   * Call API gọi dữ liệu trang 1 khi lần đầu tải giao diện
+   */
   mounted() {
     var me = this;
     try {
+      // var res = APIMethods.GetOfficer(
+      //   `http://localhost:5901/api/v1/Officers/paging?Offset=1&Limit=20&filter=${this.filter}`
+      // );
+      // me.employees = res.data.data;
+      // me.totalCount = res.data.totalCount;
+      // me.$emit("totalCountFunction", me.totalCount);
+      // me.dataLength = me.employees.length;
+      // me.$emit("loadingFunction", false);
       axios
         .get(
           `http://localhost:5901/api/v1/Officers/paging?Offset=1&Limit=20&filter=${this.filter}`
@@ -120,22 +149,22 @@ export default {
           me.employees = res.data.data;
           me.totalCount = res.data.totalCount;
           me.$emit("totalCountFunction", me.totalCount);
-          me.dataLength=me.employees.length;
+          me.dataLength = me.employees.length;
+          me.$emit("loadingFunction", false);
         });
     } catch (error) {
-      console.log("lỗi")
+      console.log("lỗi");
       console.log(error);
+      me.$emit("loadingFunction", false);
     }
-    
   },
   created() {
     this.employees = this.reloadData;
-    
   },
   watch: {
     reloadData() {
       this.employees = this.reloadData;
-      this.dataLength=this.reloadData.length;
+      this.dataLength = this.reloadData.length;
     },
   },
 };

@@ -98,6 +98,7 @@ thead tr {
   border-bottom: 1px solid #b1b1b1;
   text-align: left;
   padding-left: 12px;
+  
 }
 
 .m-content-table .m-content-table-column-3 {
@@ -106,6 +107,9 @@ thead tr {
   border-bottom: 1px solid #b1b1b1;
   text-align: left;
   padding-left: 12px;
+}
+.m-content-table tbody .m-content-table-column-3{
+  color: var(--main-color);
 }
 
 .m-content-table .m-content-table-column-4 {

@@ -72,4 +72,5 @@ export default {
 } -->
 <style>
 @import url(styles/app.css);
+
 </style>
