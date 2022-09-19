@@ -5,8 +5,8 @@
         <img src="../../../assets/icons/ic_image.png" alt="" />
         <p class="">Chọn ảnh</p>
         <h3>
-          Họ và tên <br />
-          Số hiệu cán bộ
+          {{ dataSave.fullName }} <br />
+          {{ dataSave.officerCode }}
         </h3>
       </div>
       <div class="m-form-content">
@@ -157,7 +157,7 @@
               tabindex="11"
               type="checkbox"
               class="m-input-radio-check m-input-downline"
-              :checked="change(dataSave.equipmentManagementTraining)"
+              :checked="changeToX(dataSave.equipmentManagementTraining)"
               @click="equipmentCheck(dataSave.equipmentManagementTraining)"
               v-on:keyup.enter="
                 equipmentCheck(dataSave.equipmentManagementTraining)
@@ -168,7 +168,7 @@
               tabindex="12"
               type="checkbox"
               class="m-input-radio-check"
-              :checked="change(dataSave.workStatus)"
+              :checked="changeToX(dataSave.workStatus)"
               @click="workStatusCheck(dataSave.workStatus)"
               v-on:keyup.enter="workStatusCheck(dataSave.workStatus)"
             />
@@ -211,6 +211,8 @@
 </template>
 <script>
 import axios from "axios";
+import * as CONFIG from "../../../scripts/Resource";
+import * as VALIDATE from "../../../scripts/ValidateResources";
 
 export default {
   name: "FormContainer",
@@ -331,10 +333,10 @@ export default {
         this.warningString = "Không được để trống:";
         var codeVal = this.$refs.focusInput.value;
         var nameVal = this.$refs.employeeName.value;
-        var phoneVal = this.$refs.phoneNumber.value;
-        var emailVal = this.$refs.email.value;
-        if (phoneVal == "") this.dataSave.phoneNumber = "trống";
-        if (emailVal == "") this.dataSave.email = "user@gmail.com";
+        // var phoneVal = this.$refs.phoneNumber.value;
+        // var emailVal = this.$refs.email.value;
+        // if (phoneVal == "") this.dataSave.phoneNumber = "";
+        // if (emailVal == "") this.dataSave.email = "user@gmail.com";
         this.isShowToastSuccess = true;
         if (nameVal == "") {
           this.isShowToastSuccess = false;
@@ -345,7 +347,7 @@ export default {
           this.warningString += " Mã nhân viên;";
         }
         if (this.isShowToastSuccess) {
-          if (this.flagForm == 1) {
+          if (this.flagForm == CONFIG.FORM.ADD.FLAG) {
             this.dataSave.groupID = null;
             this.dataSave.subjectID = null;
             this.dataSave.storageRoomID = null;
@@ -360,26 +362,35 @@ export default {
                 me.$emit("showToast", true, me.warningString);
               })
               .catch((e) => {
-                if (e.response.data.errors.Email) {
-                  me.warningString = "Sai định dạng email";
+                me.warningString = "";
+                var error = e.response.data.userMsg.error;
+                if (error.includes("EmptyCode")) {
+                  me.warningString += VALIDATE.ERROR_EMPTY_CODE;
                   me.isShowToastSuccess = false;
-                  this.$emit(
-                    "showToast",
-                    me.isShowToastSuccess,
-                    me.warningString
-                  );
+                } else if (error.includes("DuplicateCode")) {
+                  me.warningString += VALIDATE.ERROR_DUPLICATE_CODE;
+                  me.isShowToastSuccess = false;
+                } else if (error.includes("OfficerName")) {
+                  me.warningString += VALIDATE.ERROR_OFFICER_NAME;
+                  me.isShowToastSuccess = false;
+                } else if (error.includes("PhoneNumber")) {
+                  me.warningString += VALIDATE.ERROR_PHONE_NUMBER;
+                  me.isShowToastSuccess = false;
+                } else if (error.includes("Email")) {
+                  me.warningString += VALIDATE.ERROR_EMAIL;
+                  me.isShowToastSuccess = false;
+                } else if (error.includes("Date")) {
+                  me.warningString += VALIDATE.ERROR_DATE;
+                  me.isShowToastSuccess = false;
                 } else {
-                  me.warningString += "Có lỗi xảy ra ở server";
-                  this.$emit(
-                    "showToast",
-                    me.isShowToastSuccess,
-                    me.warningString
-                  );
+                  me.warningString += VALIDATE.ERROR_GENERAL;
+                  me.isShowToastSuccess = false;
                 }
+                this.$emit("showToast", me.isShowToastSuccess, me.warningString);
               });
-          }
-          if (this.flagForm == 2) {
             
+          }
+          if (this.flagForm == CONFIG.FORM.EDIT.FLAG) {
             axios
               .put(
                 `http://localhost:5901/api/v1/Officers/${this.dataSelected.officerID}`,
@@ -392,34 +403,32 @@ export default {
               })
               .catch((e) => {
                 me.warningString = "";
-                if (e.response.data.errors.Email) {
-                  me.warningString += "Sai định dạng email";
+                var error = e.response.data.userMsg.error;
+                if (error.includes("EmptyCode")) {
+                  me.warningString += VALIDATE.ERROR_EMPTY_CODE;
                   me.isShowToastSuccess = false;
-
-                  this.$emit(
-                    "showToast",
-                    me.isShowToastSuccess,
-                    me.warningString
-                  );
-                } else if (e.response.data.errors.PhoneNumber) {
-                  me.warningString += "Số điện thoại không được trống";
+                } else if (error.includes("DuplicateCode")) {
+                  me.warningString += VALIDATE.ERROR_DUPLICATE_CODE;
                   me.isShowToastSuccess = false;
-
-                  this.$emit(
-                    "showToast",
-                    me.isShowToastSuccess,
-                    me.warningString
-                  );
+                } else if (error.includes("OfficerName")) {
+                  me.warningString += VALIDATE.ERROR_OFFICER_NAME;
+                  me.isShowToastSuccess = false;
+                } else if (error.includes("PhoneNumber")) {
+                  me.warningString += VALIDATE.ERROR_PHONE_NUMBER;
+                  me.isShowToastSuccess = false;
+                } else if (error.includes("Email")) {
+                  me.warningString += VALIDATE.ERROR_EMAIL;
+                  me.isShowToastSuccess = false;
+                } else if (error.includes("Date")) {
+                  me.warningString += VALIDATE.ERROR_DATE;
+                  me.isShowToastSuccess = false;
                 } else {
-                  me.warningString = "Có lỗi xảy ra ở server";
+                  me.warningString += VALIDATE.ERROR_GENERAL;
                   me.isShowToastSuccess = false;
-                  this.$emit(
-                    "showToast",
-                    me.isShowToastSuccess,
-                    me.warningString
-                  );
                 }
+                this.$emit("showToast", me.isShowToastSuccess, me.warningString);
               });
+            
           }
         } else {
           this.$emit("showToast", this.isShowToastSuccess, this.warningString);
@@ -435,8 +444,8 @@ export default {
     /**
      * Thay đổi kiểu dữ liệu int sang boolean
      */
-    change(is) {
-      if (is == 1) return true;
+    changeToX(value) {
+      if (value == 1) return true;
       else return false;
     },
 

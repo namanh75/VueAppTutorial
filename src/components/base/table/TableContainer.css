@@ -22,7 +22,7 @@ input[type="checkbox"] {
 }
 
 .m-content-table table tr:hover {
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: #d7d5d5;
 }
 
 .m-table-tr-active {
@@ -75,7 +75,7 @@ table tr td span img {
 }
 
 thead tr {
-    background-color: #EAECEF;
+    background-color: #d7d5d5;
     position: relative;
     z-index: 50;
 }

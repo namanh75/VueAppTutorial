@@ -18,20 +18,21 @@
   background-color: rgba(0, 0, 0, 0.1);
 }
 
-input[type="checkbox"] {
-  cursor: pointer;
-}
-
 .m-content-table table tr:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: #d7d5d5;
 }
 
 .m-table-tr-active {
-  background-color: rgba(0, 0, 0, 0.05);
+  border: 2px solid var(--main-color)
 }
-
+/* .m-content-table table input[type="checkbox"]:hover{
+  background-color: var(--main-color);
+} */
 .m-content-table table input[type="checkbox"] {
   filter: hue-rotate(300deg);
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
 }
 
 table,
@@ -59,6 +60,9 @@ td img {
 }
 table tr td span {
   cursor: pointer;
+}
+.m-tr-background{
+  background-color: #d7d5d5;
 }
 
 table tr td span img {

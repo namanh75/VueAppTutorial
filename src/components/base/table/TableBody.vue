@@ -4,6 +4,7 @@
       class="m-content-column"
       v-for="employee in employees"
       :key="employee.officerID"
+      
     >
       <td class="m-content-table-column-1">
         <input
@@ -67,6 +68,7 @@ export default {
       checkList: [], //check list người dùng chọn
       checkAll: false, //check box toàn bộ
       filter: "1", //bộ lọc tìm kiếm
+      isTrSelected: false, //style background cho dong dc chon
     };
   },
   props: ["employee", "checkBoxAll", "reloadData"],
@@ -93,6 +95,8 @@ export default {
       else this.checkAll = false;
       this.$emit("checkItem", this.checkAll);
       this.$emit("DeleteMany", this.checkList);
+      console.log(this.checkList);
+      // this.backGroundCheck(employee.officerID)
     },
 
     /**
@@ -109,6 +113,13 @@ export default {
       if (is == 1) return true;
       return false;
     },
+
+    // backGroundCheck(officerID) {
+    //   console.log(this.checkList)
+    //   if (this.checkList.includes(officerID)) {
+    //     console.log(officerID);
+    //   } else console.log("false");
+    // },
   },
 
   /**
@@ -157,6 +168,9 @@ export default {
       console.log(error);
       me.$emit("loadingFunction", false);
     }
+    setTimeout(() => {
+      this.$emit("loadingFunction", false);
+    }, 5000);
   },
   created() {
     this.employees = this.reloadData;

@@ -130,7 +130,7 @@ import ToastMessageSuccess from "../components/base/popup/ToastMessageSuccess.vu
 import LoadingPage from "../components/base/filters/LoadingPage.vue";
 import NodataContainer from "../components/base/references/NodataContainer.vue";
 
-import * as MISA_RESOURCE from "../scripts/MISAResource";
+import * as MISA_RESOURCE from "../scripts/Resource";
 
 export default {
   name: "OverView",
@@ -179,11 +179,11 @@ export default {
       try {
         this.showFormDetail(true);
         this.dataSelected = {};
-        // axios
-        //   .get("http://localhost:5901/api/v1/Officers/new-code")
-        //   .then((res) => {
-        //     this.dataSelected.officerCode = res.data;
-        //   });
+        axios
+          .get("http://localhost:5901/api/v1/Officers/new-code")
+          .then((res) => {
+            this.dataSelected.officerCode = res.data;
+          });
 
         this.flagForm = MISA_RESOURCE.FORM.ADD.FLAG;
         this.titleForm = MISA_RESOURCE.FORM.ADD.TITLE;
